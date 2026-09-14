@@ -9,6 +9,7 @@ const generateOtp = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
+
 export const registerCustomer = async (req: Request, res: Response) => {
     try {
 
@@ -109,9 +110,9 @@ export const loginUser = async (req: Request, res: Response) => {
 
         return res.status(200).cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production', 
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            maxAge: 7 * 24 * 60 * 60 * 1000 
+            maxAge: 7 * 24 * 60 * 60 * 1000
         }).json({
             message: "Login successful",
             success: true,
@@ -129,4 +130,25 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 }
 
+
+
+export const logout = async (req: Request, res: Response) => {
+    try {
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+            path: "/"  
+        });
+
+        return res.status(200).json({
+            message: "Logged out successfully!",
+            success: true
+        });
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send("Internal Server Error");
+    }
+}
 
