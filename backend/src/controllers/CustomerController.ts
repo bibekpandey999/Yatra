@@ -1,3 +1,4 @@
+import { Request, Response } from 'express';
 import Customer from '../models/Customer'
 import bcrypt from 'bcryptjs'
 import mongoose from 'mongoose';
@@ -8,7 +9,7 @@ const generateOtp = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
-export const registerCustomer = async (req, res) => {
+export const registerCustomer = async (req: Request, res: Response) => {
     try {
 
         const { name, phone, password } = req.body;
@@ -24,7 +25,7 @@ export const registerCustomer = async (req, res) => {
 
         if (existingUser) {
             return res.status(409).json({
-                message: "User with this email already exists",
+                message: "User with this phone number already exists",
                 success: false
             })
         }
@@ -53,3 +54,79 @@ export const registerCustomer = async (req, res) => {
     }
 
 }
+
+
+
+export const loginUser = async (req: Request, res: Response) => {
+    try {
+        const { phone, password } = req.body;
+
+        if (!phone || !password) {
+            return res.status(400).json({
+                message: "All fields are required",
+                success: false
+            });
+        }
+
+        const customer = await Customer.findOne({ phone }).select('+password')
+
+        if (!customer) {
+            return res.status(400).json({
+                message: "Invalid phone or password",
+                success: false
+            });
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, customer.password);
+
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                message: "Invalid Phone or password",
+                success: false
+            });
+        }
+
+        const JWT_SECRET = process.env.JWT_SECRET;
+
+        if (!JWT_SECRET) {
+            throw new Error("JWT_SECRET is not defined");
+        }
+
+        const token = jwt.sign(
+            { customerId: customer._id, role: 'customer' },
+            JWT_SECRET,
+            { expiresIn: '7d' }
+        )
+
+        const customerData = {
+            id: customer._id,
+            name: customer.name,
+            phone: customer.phone,
+            role: "customer",
+            profileImage: customer.profileImage?.url,
+        }
+
+
+        return res.status(200).cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', 
+            sameSite: 'strict',
+            maxAge: 7 * 24 * 60 * 60 * 1000 
+        }).json({
+            message: "Login successful",
+            success: true,
+            customer: customerData
+        });
+
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false
+        });
+
+    }
+}
+
+

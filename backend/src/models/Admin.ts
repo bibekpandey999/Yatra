@@ -5,9 +5,10 @@ const AdminSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
-        length: [3,]
+        minlength: [3, "Name must be at least 3 characters"],
     },
-    email: {
+
+    phone: {
         type: String,
         required: true,
         unique: true,
@@ -17,13 +18,20 @@ const AdminSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-        length: [3,]
+        select: false,
+        minlength: [3, "Password must be at least 3 characters"],
     },
     profileImage: {
-        type: String,
-        default: "",
+        url: {
+            type: String,
+            default: "",
+        },
+        public_id: {
+            type: String,
+            default: "",
+        },
     },
 
-},{timestamps: true});
+}, { timestamps: true });
 
-const Admin= mongoose.model("Admin",AdminSchema)
+const Admin = mongoose.model("Admin", AdminSchema)

@@ -10,6 +10,7 @@ const CustomerSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+        select: false,
         minlength: [3, "Password must be at least 3 characters"],
     },
     phone: {
@@ -19,8 +20,14 @@ const CustomerSchema = new mongoose.Schema({
         trim: true
     },
     profileImage: {
-        type: String,
-        default: "",
+        url: {
+            type: String,
+            default: "",
+        },
+        public_id: {
+            type: String,
+            default: "",
+        },
     },
     currentLocation: {
         type: {
@@ -50,7 +57,7 @@ const CustomerSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-CustomerSchema.index({currentLocation: "2dsphere"});
+CustomerSchema.index({ currentLocation: "2dsphere" });
 
 const Customer = mongoose.model("Customer", CustomerSchema)
 export default Customer;
