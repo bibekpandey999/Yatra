@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Admin from '../models/Admin'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import { TransportProvider } from '../models/TransportProvider';
 
 
 export const registerCustomer = async (req: Request, res: Response): Promise<Response> => {
@@ -186,24 +187,145 @@ export const updateAdminProfile = async (req: Request, res: Response): Promise<R
             }
         })
 
-
     } catch (err) {
+        console.log(err)
         return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 
 }
 
-export const changeAdminPassword = () => {
+export const changeAdminPassword = async (req: Request, res: Response): Promise<Response> => {
     try {
-        
-        
+
+        const adminId = req.user?.adminId;
+
+        const { oldPassword, newPassword } = req.body;
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ message: "All fields are required", success: false });
+        }
+
+        const admin = await Admin.findById(adminId).select("+password");
+
+        if (!admin) {
+            return res.status.(404).json({
+                message: "Admin not found",
+                success: false
+            })
+        }
+        const isOldPasswordCorrect = await bcrypt.compare(oldPassword, admin.password);
+        if (!isOldPasswordCorrect) {
+            return res.status(400).json({
+                message: "Old password is incorrect",
+                success: false
+            });
+        }
+
+        const isSamePassword = await bcrypt.compare(newPassword, admin.password);
+        if (isSamePassword) {
+            return res.status(400).json({
+                message: "New password must be different from old password",
+                success: false
+            });
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        admin.password = hashedNewPassword;
+
+        await admin.save();
+
+        return res.status(200).json({
+            message: "Password changed successfully",
+            success: true
+        });
+
+
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+
+}
+
+export const getAllTransportProviders = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const allTransportProviders = await TransportProvider.find().select('-password');
+        return res.status(200).json({
+            success: true,
+            transporters: allTransportProviders
+        })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+
+}
+
+export const getTransportProviderById = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const transporterId = req.params.transporterId;
+        const transporter = await TransportProvider.findById(transporterId);
+
+        if (!transporter) {
+            return res.status(404).json({
+                success: false,
+                message: "Transporter not found",
+            });
+
+        }
+
+        return res.status(200).json({
+            success: true,
+            transporter
+        })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+
+}
+
+
+export const verifyTransportProviderKYC = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
     } catch (err) {
         console.log(err)
     }
 
 }
 
-export const getAllTransportProviders = () => {
+
+export const rejectTransportProviderKYC = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+
+}
+
+export const deleteTransportProvider = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+
+}
+
+export const unblockTransportProvider = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+
+}
+
+export const blockTransportProvider = async (req: Request, res: Response): Promise<Response> => {
     try {
 
     } catch (err) {
@@ -213,130 +335,7 @@ export const getAllTransportProviders = () => {
 }
 
 
-export const getTransportProviderById = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-
-}
-
-
-export const verifyTransportProviderKYC = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-
-}
-
-
-export const rejectTransportProviderKYC = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-
-}
-
-export const deleteTransportProvider = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-
-}
-
-export const unblockTransportProvider = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-
-}
-
-export const blockTransportProvider = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-
-}
-
-
-export const getPendingKYCProviders = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-export const getBlockedTransportProviders = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-export const getAllCustomers = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-export const getCustomerById = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-export const blockCustomer = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-
-export const unblockCustomer = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-
-export const deleteCustomer = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-export const getCustomerRideHistory = () => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-export const getAllRides = () => {
+export const getPendingKYCProviders = async (req: Request, res: Response): Promise<Response> => {
     try {
 
     } catch (err) {
@@ -344,7 +343,7 @@ export const getAllRides = () => {
     }
 }
 
-export const getRideById = () => {
+export const getBlockedTransportProviders = async (req: Request, res: Response): Promise<Response> => {
     try {
 
     } catch (err) {
@@ -352,7 +351,7 @@ export const getRideById = () => {
     }
 }
 
-export const getActiveRides = () => {
+export const getAllCustomers = async (req: Request, res: Response): Promise<Response> => {
     try {
 
     } catch (err) {
@@ -360,10 +359,7 @@ export const getActiveRides = () => {
     }
 }
 
-
-
-
-export const viewRideDetails = () => {
+export const getCustomerById = async (req: Request, res: Response): Promise<Response> => {
     try {
 
     } catch (err) {
@@ -371,8 +367,7 @@ export const viewRideDetails = () => {
     }
 }
 
-
-export const cancelRide = () => {
+export const blockCustomer = async (req: Request, res: Response): Promise<Response> => {
     try {
 
     } catch (err) {
@@ -381,7 +376,7 @@ export const cancelRide = () => {
 }
 
 
-export const getCancelledRides = () => {
+export const unblockCustomer = async (req: Request, res: Response): Promise<Response> => {
     try {
 
     } catch (err) {
@@ -390,7 +385,77 @@ export const getCancelledRides = () => {
 }
 
 
-export const getCompletedRides = () => {
+export const deleteCustomer = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+export const getCustomerRideHistory = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+export const getAllRides = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+export const getRideById = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+export const getActiveRides = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
+
+
+export const viewRideDetails = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
+export const cancelRide = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
+export const getCancelledRides = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+
+export const getCompletedRides = async (req: Request, res: Response): Promise<Response> => {
     try {
 
     } catch (err) {
