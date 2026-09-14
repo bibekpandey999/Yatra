@@ -17,7 +17,7 @@ export default function Footer() {
           </Link>
         </div>
         <span className="text-sm text-white/60">
-          © 2026 Yatra. All rights reserved.
+          @ 2026 Yatra All rights reserved.
         </span>
       </div>
     </footer>
