@@ -64,7 +64,6 @@ const transportProviderSchema = new mongoose.Schema(
             ward: { type: String, }
         },
 
-
         isVerified: {
             type: Boolean,
             default: false,

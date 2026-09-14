@@ -3,6 +3,7 @@ import Admin from '../models/Admin'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { TransportProvider } from '../models/TransportProvider';
+import Customer from '../models/Customer'
 
 
 export const registerCustomer = async (req: Request, res: Response): Promise<Response> => {
@@ -272,7 +273,6 @@ export const getTransportProviderById = async (req: Request, res: Response): Pro
                 success: false,
                 message: "Transporter not found",
             });
-
         }
 
         return res.status(200).json({
@@ -307,89 +307,245 @@ export const rejectTransportProviderKYC = async (req: Request, res: Response): P
 
 }
 
+
 export const deleteTransportProvider = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const transporterId = req.params.transporterId;
+        const transporter = await TransportProvider.findByIdAndDelete(transporterId);
+
+        if (!transporter) {
+            return res.status(404).json({
+                success: false,
+                message: "Transporter not found",
+            });
+
+        }
+
+        return res.status(200).json({
+            message: "Trasporter removed successfully !",
+            success: true
+        })
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 
 }
 
-export const unblockTransportProvider = async (req: Request, res: Response): Promise<Response> => {
+export const blockUnBlockTransportProvider = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const { action } = req.body;
+        const transporterId = req.params.transporterId;
+
+        const isValidAction = ["block", "unblock"].includes(action);
+
+        if (!isValidAction) {
+            return res.status(400).json({
+                message: "Invalid action",
+                success: false,
+            });
+        }
+
+        const transporter = await TransportProvider.findById(transporterId);
+
+        if (!transporter) {
+            return res.status(404).json({
+                message: "Transporter not found !",
+                success: false
+            })
+        }
+
+        if (action === "block" && transporter.isBlocked) {
+            return res.status(400).json({
+                message: "Transporter is already blocked",
+                success: false,
+            });
+        } else {
+            transporter.isBlocked = true;
+        }
+
+        if (action === "unblock" && !transporter.isBlocked) {
+            return res.status(400).json({
+                message: "Transporter is already unblocked",
+                success: false,
+            });
+        } else {
+            transporter.isBlocked = false;
+        }
+
+        await transporter.save();
+
+        return res.status(200).json({
+            message: `Transporter ${action}ed successfully`,
+            success: true,
+        });
+
+
 
     } catch (err) {
-        console.log(err)
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 
 }
-
-export const blockTransportProvider = async (req: Request, res: Response): Promise<Response> => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-
-}
-
 
 export const getPendingKYCProviders = async (req: Request, res: Response): Promise<Response> => {
     try {
 
+        const transporters = await TransportProvider.find({
+            isKycCompleted: false,
+            isKycDataSubmitted: true
+
+        }).select("-password");
+
+        return res.status(200).json({
+            success: true,
+            count: transporters.length,
+            transporters,
+        })
+
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
 export const getBlockedTransportProviders = async (req: Request, res: Response): Promise<Response> => {
     try {
 
+        const transporters = await TransportProvider.find({
+            isBlocked: true,
+        }).select("-password");
+
+        return res.status(200).json({
+            success: true,
+            count: transporters.length,
+            transporters,
+        })
+
     } catch (err) {
-        console.log(err)
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
 export const getAllCustomers = async (req: Request, res: Response): Promise<Response> => {
     try {
 
+        const customers = await Customer.find().select("-password");
+
+        return res.status(200).json({
+            success: true,
+            count: customers.length,
+            customers,
+        })
+
     } catch (err) {
-        console.log(err)
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
 export const getCustomerById = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const customerId = req.params.customerId;
+        const customer = await Customer.findById(customerId).select("-password");
+
+        if (!customer) {
+            return res.status(404).json({
+                success: false,
+                message: "Customer not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            customer
+        })
+
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
-export const blockCustomer = async (req: Request, res: Response): Promise<Response> => {
+export const blockUnBlockCustomer = async (req: Request, res: Response): Promise<Response> => {
     try {
 
+         const { action } = req.body;
+        const customerId = req.params.customerId;
+
+        const isValidAction = ["block", "unblock"].includes(action);
+
+        if (!isValidAction) {
+            return res.status(400).json({
+                message: "Invalid action",
+                success: false,
+            });
+        }
+
+        const customer = await Customer.findById(customerId);
+        if (!customer) {
+            return res.status(404).json({
+                message: "Transporter not found !",
+                success: false
+            })
+        }
+
+        if (action === "block" && customer.isBlocked) {
+            return res.status(400).json({
+                message: "Transporter is already blocked",
+                success: false,
+            });
+        } else {
+            customer.isBlocked = true;
+        }
+
+        if (action === "unblock" && !customer.isBlocked) {
+            return res.status(400).json({
+                message: "Transporter is already unblocked",
+                success: false,
+            });
+        } else {
+            customer.isBlocked = false;
+        }
+
+        await customer.save();
+
+        return res.status(200).json({
+            message: `Customer ${action}ed successfully`,
+            success: true,
+        });
+
+
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
-
-
-export const unblockCustomer = async (req: Request, res: Response): Promise<Response> => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-    }
-}
-
 
 export const deleteCustomer = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const customerId = req.params.transporterId;
+        const customer = await Customer.findByIdAndDelete(customerId);
+
+        if (!customer) {
+            return res.status(404).json({
+                success: false,
+                message: "Customer not found",
+            });
+        }
+
+        return res.status(200).json({
+            message: "Customer removed successfully !",
+            success: true
+        })
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
@@ -398,6 +554,7 @@ export const getCustomerRideHistory = async (req: Request, res: Response): Promi
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
@@ -406,6 +563,7 @@ export const getAllRides = async (req: Request, res: Response): Promise<Response
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
@@ -414,6 +572,7 @@ export const getRideById = async (req: Request, res: Response): Promise<Response
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
@@ -422,6 +581,7 @@ export const getActiveRides = async (req: Request, res: Response): Promise<Respo
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
@@ -433,6 +593,7 @@ export const viewRideDetails = async (req: Request, res: Response): Promise<Resp
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
@@ -442,6 +603,7 @@ export const cancelRide = async (req: Request, res: Response): Promise<Response>
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
@@ -451,6 +613,7 @@ export const getCancelledRides = async (req: Request, res: Response): Promise<Re
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
@@ -460,6 +623,7 @@ export const getCompletedRides = async (req: Request, res: Response): Promise<Re
 
     } catch (err) {
         console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
 
