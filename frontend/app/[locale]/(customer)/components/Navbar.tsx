@@ -1,9 +1,11 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
   return (
     <nav className="bg-primary flex items-center justify-between px-8 py-4">
-      <span className="text-white text-xl font-bold">Yatra</span>
+      <Image src="/logo.png" alt="Yatra" width={120} height={40}
+      className="invert"  /> 
       <div className="flex gap-3">
         <Link
           href="/en/login"
