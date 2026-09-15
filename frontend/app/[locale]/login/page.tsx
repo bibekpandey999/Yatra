@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function LoginPage() {
   const [phone, setPhone] = useState("");
@@ -29,9 +30,16 @@ export default function LoginPage() {
           onChange={(e) => setRole(e.target.value)}
           className="border-2 border-ray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
         >
-          <option value="rider">Rider</option>
-          <option value="transporter">Bus/Truck Provider</option>
+          <option value="rider">Passenger</option>
+          <option value="transporter">Rider</option>
+          <option value="booking-partner">Booking Partner</option>
         </select>
+        <p className="text-sm text-gray-600 text-center">
+            Don't have an account? {""}
+            <Link href="/en/register" className="text-primary font-semibold">
+            Register
+            </Link>
+        </p>
         <button className="bg-primary text-white p-2 rounded">Login</button>
       </form>
     </div>

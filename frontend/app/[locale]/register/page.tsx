@@ -1,5 +1,6 @@
 "use client";
 import {use, useState} from "react";
+import Link from "next/link";
 
 export default function RegisterPage(){
     const [name,setName]=useState("");
@@ -30,7 +31,7 @@ export default function RegisterPage(){
                 type="password"
                 placeholder="Password"
                 value={password}
-                onChange={(e)=> setPhone(e.target.value)}
+                onChange={(e)=> setPassword(e.target.value)}
                 className=" border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
                 />
 
@@ -44,8 +45,15 @@ export default function RegisterPage(){
                 value="rider">Passenger</option>
                 <option value="booking-partner">Booking Partner</option>
                 </select>
+               
                 <button
             className="bg-primary text-white p-2 rounded">Register</button>
+             <p className="text-sm text-gray-600 text-center">
+                    Already have an account?{" "}
+                    <Link href="/en/login" className="text-primary font-semibold">
+                    Login
+                    </Link>
+                </p>
 
             </form>
         </div>
