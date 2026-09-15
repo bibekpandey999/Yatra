@@ -1,3 +1,4 @@
+import {Car,Package,Truck} from "lucide-react";
 import Link from "next/link";
 
 export default function GetStarted() {
@@ -12,8 +13,10 @@ export default function GetStarted() {
 
                 <Link
                 href="/en/register"
-                className="flex-1 border rounded-lg p-6 text-center hover:border-accent transition"
+                className="flex-1 shadow-lg rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
                 >
+                    <Car className="mx-auto text-primary mb-3" size={32}/>
+                    
                     <h3 className="font-semibold text-primary text-lg mb-2">
                         Rider
                     </h3>
@@ -26,8 +29,9 @@ export default function GetStarted() {
 
                 <Link
                 href="/en/register"
-                className="flex-1 border rounded-lg p-6 text-center hover:border-accent transition"
+                className="flex-1 shadow-lg rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
                 >
+                    <Package className="mx-auto text-primary mb-3" size={32}/>
                     <h3 className="font-semibold text-primary text-lg mb-2">
                         Delivery Partner
                     </h3>
@@ -39,8 +43,9 @@ export default function GetStarted() {
 
                 <Link
                 href="/en/register"
-                className="flex-1 border rounded-lg p-6 text-center hover:border-accent transition"
+                className="flex-1 shadow-lg rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
                 >
+                    <Truck className="mx-auto text-primary mb-3" size={32}/>
                     <h3 className="font-semibold text-primary text-lg mb-2">
                         Bus/Truck Provider
                     </h3>
