@@ -1,6 +1,7 @@
 "use client";
-import {use, useState} from "react";
+import { useState} from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function RegisterPage(){
     const [name,setName]=useState("");
@@ -11,7 +12,14 @@ export default function RegisterPage(){
     return(
         
         <div className="flex min-h-screen items-center justify-center bg-white">
-            <form className="flex flex-col gap-4 border-2 border-gray-200 shadow-lg rounded-lg p-8 w-80 bg-white">
+            <form 
+            onSubmit={(e)=>{
+                e.preventDefault();
+                console.log({name,phone,password,role});
+            }}
+            className="flex flex-col gap-4 border-2 border-gray-200 shadow-xl rounded-2xl p-8 w-80 bg-white">
+                <Image src="/logo.png" alt="Yatra" width={100} height={35} className="mx-auto mb-2"
+                />
                 <h1 className="text-xl font-semibold text-primary"> Register</h1>
                 <input
                 type="text"
@@ -47,7 +55,11 @@ export default function RegisterPage(){
                 </select>
                
                 <button
-            className="bg-primary text-white p-2 rounded">Register</button>
+                type="submit"
+            className="bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition w-full"
+            >
+                Register
+                </button>
              <p className="text-sm text-gray-600 text-center">
                     Already have an account?{" "}
                     <Link href="/en/login" className="text-primary font-semibold">
