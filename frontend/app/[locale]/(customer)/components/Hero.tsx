@@ -8,7 +8,7 @@ export default function Hero() {
         Book a bike, car, or truck in minutes. Track your ride live and pay
         however works for you.
       </p>
-      <button className="bg-accent text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-accent-dark transition">
+      <button className="bg-[#3e3abddd] text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-[#504cc5dd] transition">
         Book a Ride
       </button>
     </section>

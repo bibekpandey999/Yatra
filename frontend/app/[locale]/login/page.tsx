@@ -9,15 +9,12 @@ export default function LoginPage() {
   const [role, setRole] = useState("rider");
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
-      <form 
-      onSubmit={(e)=> {e.preventDefault();
-        console.log({phone,password,role});
-      }} 
-      className="flex flex-col gap-4 border-2 border-gray-200 shadow-xl rounded-2xl p-8 w-80 bg-white">
+    <div className="flex min-h-screen items-center p-4 justify-center bg-white">
+      <form className="flex w-full flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-8 shadow-lg md:w-1/2 lg:w-1/3">
         <Image src="/logo.png" alt="Yatra" width={100} height={35}
-        className="mx-auto mb-2"/>
+          className="mx-auto mb-2" />
         <h1 className="text-xl font-semibold text-primary">Login</h1>
+
         <input
           type="tel"
           placeholder="Phone number"
@@ -25,6 +22,7 @@ export default function LoginPage() {
           onChange={(e) => setPhone(e.target.value)}
           className="border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
         />
+
         <input
           type="password"
           placeholder="Password"
@@ -32,6 +30,7 @@ export default function LoginPage() {
           onChange={(e) => setPassword(e.target.value)}
           className="border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
         />
+
         <select
           value={role}
           onChange={(e) => setRole(e.target.value)}
@@ -41,17 +40,19 @@ export default function LoginPage() {
           <option value="transporter">Rider</option>
           <option value="booking-partner">Booking Partner</option>
         </select>
+
         <p className="text-sm text-gray-600 text-center">
-            Don't have an account? {""}
-            <Link href="/en/register" className="text-primary font-semibold">
+          Don't have an account? {""}
+          <Link href="/en/register" className="text-primary font-semibold">
             Register
-            </Link>
+          </Link>
         </p>
-        <button 
-        type="submit"
-        className="bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition w-full">
-            Login
-            </button>
+
+        <button
+          type="submit"
+          className="bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition w-full">
+          Login
+        </button>
       </form>
     </div>
   );

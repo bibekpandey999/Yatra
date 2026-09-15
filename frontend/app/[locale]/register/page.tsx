@@ -17,7 +17,7 @@ export default function RegisterPage(){
                 e.preventDefault();
                 console.log({name,phone,password,role});
             }}
-            className="flex flex-col gap-4 border-2 border-gray-200 shadow-xl rounded-2xl p-8 w-80 bg-white">
+           className="flex w-full flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-8 shadow-lg md:w-1/2 lg:w-1/3">
                 <Image src="/logo.png" alt="Yatra" width={100} height={35} className="mx-auto mb-2"
                 />
                 <h1 className="text-xl font-semibold text-primary"> Register</h1>
