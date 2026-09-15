@@ -7,9 +7,9 @@ export default function AdminDashboard() {
   ];
 
   const pendingProviders = [
-    { name: "Ramesh Thapa", phone: "9812345678", vehicle: "Bus", status: "Pending" },
-    { name: "Sita Gurung", phone: "9801234567", vehicle: "Truck", status: "Pending" },
-    { name: "Bikash Rai", phone: "9845123456", vehicle: "Car", status: "Pending" },
+    { name: "Niten Thapa", phone: "9812345678", vehicle: "Bus", status: "Pending" },
+    { name: "Sahil Gurung", phone: "9801234567", vehicle: "Car", status: "Pending" },
+    { name: "Samir Rana Magar", phone: "9801442366", vehicle: "Truck", status: "Pending" },
   ];
 
   return (
