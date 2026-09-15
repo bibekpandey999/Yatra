@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import Customer from '../models/Customer'
 import bcrypt from 'bcryptjs'
-import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken'
+import { TransportProvider } from '../models/TransportProvider';
 
 
 const generateOtp = () => {
@@ -234,4 +234,101 @@ export const updateAdminProfile = async (req: Request, res: Response): Promise<R
         return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 
+}
+
+
+export const requestRide = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const customerId = req.user?.customerId;
+        const transporterId = req.params.transporterId;
+
+
+        const { pickupLocation, dropoffLocation, passendgerCount} = req.body;
+
+        
+
+
+
+        const transporter = await TransportProvider.findById(transporterId).select("-password");
+        if (!transporter) {
+            return res.status(404).json({
+                messsage: "Transporter not found !",
+                success: false
+            })
+        }
+
+        const vehicleType = transporter.vehicle?.type;
+
+        if (!transporter.isAvailable) {
+            return res.status(404).json({
+                messsage: "Transporter is not available !",
+                success: false
+            })
+        }
+
+
+
+    } catch (err) {
+
+    }
+}
+
+
+export const getPriceEstimate = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+
+    }
+}
+
+
+export const cancelRideRequest = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+
+    }
+}
+
+export const getRideRequestStatus = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+
+    }
+}
+
+export const getMatchedTransporter = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+
+    }
+}
+
+
+export const getCurrentRide = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+
+    }
+}
+
+
+export const cancelRide = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+
+    }
+}
+
+export const getRideStatus = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+    } catch (err) {
+
+    }
 }
