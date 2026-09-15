@@ -586,8 +586,6 @@ export const getActiveRides = async (req: Request, res: Response): Promise<Respo
 }
 
 
-
-
 export const viewRideDetails = async (req: Request, res: Response): Promise<Response> => {
     try {
 
@@ -598,7 +596,7 @@ export const viewRideDetails = async (req: Request, res: Response): Promise<Resp
 }
 
 
-export const cancelRide = async (req: Request, res: Response): Promise<Response> => {
+export const getCancelRideById = async (req: Request, res: Response): Promise<Response> => {
     try {
 
     } catch (err) {
