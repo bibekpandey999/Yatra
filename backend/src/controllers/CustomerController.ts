@@ -3,6 +3,7 @@ import Customer from '../models/Customer'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { TransportProvider } from '../models/TransportProvider';
+import RideRequest from '../models/RideRequest'
 
 
 const generateOtp = () => {
@@ -241,13 +242,22 @@ export const requestRide = async (req: Request, res: Response): Promise<Response
     try {
         const customerId = req.user?.customerId;
         const transporterId = req.params.transporterId;
+        const { pickupLocation, dropoffLocation, passengerCount } = req.body;
 
+        if (!pickupLocation?.coordinates || !dropoffLocation?.coordinates || pickupLocation.coordinates.length !== 2 ||
+            dropoffLocation.coordinates.length !== 2) {
+            return res.status(400).json({
+                message: "location validation failed",
+                success: false
+            })
+        }
 
-        const { pickupLocation, dropoffLocation, passendgerCount} = req.body;
-
-        
-
-
+        if (!customerId) {
+            return res.status(401).json({
+                message: "Customer authentication required",
+                success: false,
+            });
+        }
 
         const transporter = await TransportProvider.findById(transporterId).select("-password");
         if (!transporter) {
@@ -259,6 +269,13 @@ export const requestRide = async (req: Request, res: Response): Promise<Response
 
         const vehicleType = transporter.vehicle?.type;
 
+        if (!vehicleType) {
+            return res.status(400).json({
+                message: "Transporter vehicle information is missing",
+                success: false,
+            });
+        }
+
         if (!transporter.isAvailable) {
             return res.status(404).json({
                 messsage: "Transporter is not available !",
@@ -266,9 +283,95 @@ export const requestRide = async (req: Request, res: Response): Promise<Response
             })
         }
 
+        if (!transporter.isVerified || transporter.isBlocked || !transporter.isKycCompleted) {
+            return res.status(404).json({
+                messsage: "Transporter is not eligible for rides !",
+                success: false
+            })
+        }
+
+        const [pickupLongitude, pickupLatitude] = pickupLocation.coordinates;
+        const [dropoffLongitude, dropoffLatitude] = dropoffLocation.coordinates;
+
+        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/` + `${pickupLongitude},${pickupLatitude};` + `${dropoffLongitude},${dropoffLatitude}` + `?overview=false`;
+
+        const routeResponse = await fetch(osrmUrl);
+
+        if (!routeResponse.ok) {
+            return res.status(500).json({
+                message: "Unable to calculate the route",
+                success: false
+            })
+        }
+
+        const routeData = await routeResponse.json();
+
+        if (routeData.code !== "Ok" || !routeData.routes?.length) {
+            return res.status(400).json({
+                message: "Route could not be found",
+                success: false,
+            });
+        }
+
+        const distanceKm = routeData.routes[0].distance / 1000;
+        const pricePerKm = transporter.pricePerKm || 0;
+        const estimatedFare = distanceKm * pricePerKm;
+
+        // Request expires after 5 minutes
+        const expiresAt = new Date(
+            Date.now() + 5 * 60 * 1000
+        );
+
+        const rideRequest = await RideRequest.create({
+            customer: customerId,
+            pickupLocation: {
+                address: pickupLocation.address,
+                coordinates: pickupLocation.coordinates
+            },
+            dropoffLocation: {
+                address: dropoffLocation.address,
+                coordinates: dropoffLocation.coordinates,
+            },
+
+            distanceKm: Number(distanceKm.toFixed(2)),
+
+            estimatedFare: Number(
+                estimatedFare.toFixed(2)
+            ),
+            vehicleType,
+            passengerCount: passengerCount || 1,
+            status: "pending",
+            expiresAt
+
+        })
+
+
+        return res.status(201).json({
+            message: "Ride requested successfully",
+            success: true,
+            rideRequest: {
+                id: rideRequest._id,
+                pickupLocation: rideRequest.pickupLocation,
+                dropoffLocation: rideRequest.dropoffLocation,
+                distanceKm: rideRequest.distanceKm,
+                estimatedFare: rideRequest.estimatedFare,
+                vehicleType: rideRequest.vehicleType,
+                passengerCount: rideRequest.passengerCount,
+                status: rideRequest.status,
+                expiresAt: rideRequest.expiresAt,
+            }
+
+        })
+
+
 
 
     } catch (err) {
+        console.log(err)
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false
+        })
 
     }
 }
@@ -285,16 +388,102 @@ export const getPriceEstimate = async (req: Request, res: Response): Promise<Res
 
 export const cancelRideRequest = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const rideRequestId = req.params.id;
+        const customerId = req.user?.customerId;
+
+        if (!customerId) {
+            return res.status(401).json({
+                message: "Unauthorized",
+                success: false,
+            });
+        }
+
+        const rideRequest = await RideRequest.findById(rideRequestId);
+
+        if (!rideRequest) {
+            return res.status(404).json({
+                message: "Ride Request not found",
+                success: false
+            })
+        }
+
+        if (rideRequest.customer.toString() !== customerId) {
+            return res.status(403).json({
+                message: " you are not authorized to cancel",
+                success: false
+            })
+        }
+
+        if (rideRequest.status !== "pending") {
+            return res.status(400).json({
+                message: `Ride request cannot be cancelled because it is already ${rideRequest.status}`,
+                success: false,
+            });
+        }
+
+        rideRequest.status = "cancelled";
+        rideRequest.cancelledAt = new Date()
+
+        await rideRequest.save();
+
+        return res.status(200).json({
+            message: "Ride request cancelled successfully",
+            success: true,
+            rideRequest,
+        });
+
+
 
     } catch (err) {
-
+        console.error(err);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false,
+        });
     }
 }
 
 export const getRideRequestStatus = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const rideRequestId = req.params.id;
+        const customerId = req.user?.customerId;
+
+        if (!customerId) {
+            return res.status(401).json({
+                message: "Unauthorized",
+                success: false,
+            });
+        }
+
+        const rideRequest = await RideRequest.findById(rideRequestId);
+
+        if (!rideRequest) {
+            return res.status(404).json({
+                message: "Ride Request not found",
+                success: false
+            })
+        }
+
+        if (rideRequest.customer.toString() !== customerId) {
+            return res.status(403).json({
+                message: " you are not authorized to access the Request Information",
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            message:" status fetched successfully !",
+            success: true,
+            status: rideRequest.status
+        })
+
 
     } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false,
+        });
 
     }
 }
@@ -303,6 +492,11 @@ export const getMatchedTransporter = async (req: Request, res: Response): Promis
     try {
 
     } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false,
+        });
 
     }
 }
@@ -312,6 +506,11 @@ export const getCurrentRide = async (req: Request, res: Response): Promise<Respo
     try {
 
     } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false,
+        });
 
     }
 }
@@ -321,6 +520,11 @@ export const cancelRide = async (req: Request, res: Response): Promise<Response>
     try {
 
     } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false,
+        });
 
     }
 }
@@ -329,6 +533,11 @@ export const getRideStatus = async (req: Request, res: Response): Promise<Respon
     try {
 
     } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            success: false,
+        });
 
     }
 }
