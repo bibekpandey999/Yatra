@@ -208,7 +208,7 @@ export const changeAdminPassword = async (req: Request, res: Response): Promise<
         const admin = await Admin.findById(adminId).select("+password");
 
         if (!admin) {
-            return res.status.(404).json({
+            return res.status(404).json({
                 message: "Admin not found",
                 success: false
             })
@@ -287,26 +287,100 @@ export const getTransportProviderById = async (req: Request, res: Response): Pro
 
 }
 
-
 export const verifyTransportProviderKYC = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const { transporterId } = req.params;
+
+        const transporter = await TransportProvider.findById(transporterId);
+
+        if (!transporter) {
+            return res.status(404).json({
+                success: false,
+                message: "Transport provider not found",
+            });
+        }
+
+        if (!transporter.isKycDataSubmitted) {
+            return res.status(400).json({
+                success: false,
+                message: " KYC data has not been submitted"
+            })
+        }
+
+        if (transporter.isKycCompleted) {
+            return res.status(400).json({
+                success: false,
+                message: "KYC is already verified"
+            })
+        }
+
+        transporter.isKycCompleted = true;
+        transporter.isVerified = true;
+        transporter.verificationStatus = "approved";
+        transporter.verifiedAt = new Date();
+
+        await transporter.save();
+
+        return res.status(200).json({
+            message: "Transport Provider Kyc Verified successfully"
+        })
+
+
 
     } catch (err) {
-        console.log(err)
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
     }
 
 }
-
 
 export const rejectTransportProviderKYC = async (req: Request, res: Response): Promise<Response> => {
     try {
 
+        const { transporterId } = req.params;
+
+        const transporter = await TransportProvider.findById(transporterId);
+
+        if (!transporter) {
+            return res.status(404).json({
+                success: false,
+                message: "Transport provider not found",
+            });
+        }
+
+        if (!transporter.isKycDataSubmitted) {
+            return res.status(400).json({
+                success: false,
+                message: " KYC data has not been submitted"
+            })
+        }
+
+        transporter.isKycCompleted = false;
+        transporter.isVerified = false;
+        transporter.verificationStatus = "rejected";
+        transporter.verifiedAt = undefined;
+
+        await transporter.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Transport provider KYC rejected successfully",
+            transporter,
+        });
+
+
     } catch (err) {
-        console.log(err)
+        console.log(err);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
     }
 
 }
-
 
 export const deleteTransportProvider = async (req: Request, res: Response): Promise<Response> => {
     try {
@@ -474,7 +548,7 @@ export const getCustomerById = async (req: Request, res: Response): Promise<Resp
 export const blockUnBlockCustomer = async (req: Request, res: Response): Promise<Response> => {
     try {
 
-         const { action } = req.body;
+        const { action } = req.body;
         const customerId = req.params.customerId;
 
         const isValidAction = ["block", "unblock"].includes(action);

@@ -57,7 +57,6 @@ export const registerCustomer = async (req: Request, res: Response) => {
 }
 
 
-
 export const loginUser = async (req: Request, res: Response) => {
     try {
         const { phone, password } = req.body;
@@ -131,14 +130,13 @@ export const loginUser = async (req: Request, res: Response) => {
 }
 
 
-
 export const logout = async (req: Request, res: Response) => {
     try {
         res.clearCookie("token", {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
-            path: "/"  
+            path: "/"
         });
 
         return res.status(200).json({
@@ -152,3 +150,88 @@ export const logout = async (req: Request, res: Response) => {
     }
 }
 
+
+export const changeCustomerPassword = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+        const customerId = req.user?.customerId;
+
+        const { oldPassword, newPassword } = req.body;
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ message: "All fields are required", success: false });
+        }
+
+        const customer = await Customer.findById(customerId).select("+password");
+
+        if (!customer) {
+            return res.status(404).json({
+                message: "Admin not found",
+                success: false
+            })
+        }
+        const isOldPasswordCorrect = await bcrypt.compare(oldPassword, customer.password);
+        if (!isOldPasswordCorrect) {
+            return res.status(400).json({
+                message: "Old password is incorrect",
+                success: false
+            });
+        }
+
+        const isSamePassword = await bcrypt.compare(newPassword, customer.password);
+        if (isSamePassword) {
+            return res.status(400).json({
+                message: "New password must be different from old password",
+                success: false
+            });
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        customer.password = hashedNewPassword;
+
+        await customer.save();
+
+        return res.status(200).json({
+            message: "Password changed successfully",
+            success: true
+        });
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+
+}
+
+
+export const updateAdminProfile = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+        const customerId = req.user?.customerId;
+        const { name } = req.body;
+
+        const customer = await Customer.findById(customerId);
+
+        if (!customer) {
+            return res.status(404).json({ message: "Admin not found", success: false });
+        }
+
+        if (name) customer.name = name.trim();
+        await customer.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile updated successfully",
+            customer: {
+                _id: customer._id,
+                name: customer.name,
+                phone: customer.phone,
+                profileImage: customer.profileImage
+            }
+        })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+
+}

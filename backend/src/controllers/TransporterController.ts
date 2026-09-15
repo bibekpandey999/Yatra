@@ -209,13 +209,88 @@ export const submitKyc = async (req: Request, res: Response): Promise<Response> 
 
         return res.status(200).json({
             status: 200,
-            message:"KYC submitted successfully !"
+            message: "KYC submitted successfully !"
         })
-
-
 
     } catch (err) {
         console.log(err)
         return res.status(500).send("Internal Server Error");
     }
+}
+
+
+export const getTransporterProfile = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const transporterId = req.user?.transporterId;
+        const transporter = await TransportProvider.findById(transporterId).select("-password");
+
+        if (!transporter) {
+            return res.status(404).json({
+                message: "Transporter not found",
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            message:"Transporter profile featched successfully",
+            success: true,
+            transporter
+        })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+
+export const changeTransporterPassword = async (req: Request, res: Response): Promise<Response> => {
+    try {
+
+        const transporterId = req.user?.transporterId;
+
+        const { oldPassword, newPassword } = req.body;
+        if (!oldPassword || !newPassword) {
+            return res.status(400).json({ message: "All fields are required", success: false });
+        }
+
+        const transporter = await TransportProvider.findById(transporterId).select("+password");
+
+        if (!transporter) {
+            return res.status(404).json({
+                message: "Admin not found",
+                success: false
+            })
+        }
+        const isOldPasswordCorrect = await bcrypt.compare(oldPassword, transporter.password);
+        if (!isOldPasswordCorrect) {
+            return res.status(400).json({
+                message: "Old password is incorrect",
+                success: false
+            });
+        }
+
+        const isSamePassword = await bcrypt.compare(newPassword, transporter.password);
+        if (isSamePassword) {
+            return res.status(400).json({
+                message: "New password must be different from old password",
+                success: false
+            });
+        }
+
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+        transporter.password = hashedNewPassword;
+
+        await transporter.save();
+
+        return res.status(200).json({
+            message: "Password changed successfully",
+            success: true
+        });
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+
 }
