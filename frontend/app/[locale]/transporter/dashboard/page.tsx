@@ -16,7 +16,7 @@ export default function TransporterDashboard() {
     <div className="min-h-screen bg-gray-50 p-6 md:p-10">
       <h1 className="text-3xl font-bold text-primary mb-8">Transporter Dashboard</h1>
 
-      {/* Stats row */}
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         {stats.map((stat) => (
           <div
@@ -29,7 +29,7 @@ export default function TransporterDashboard() {
         ))}
       </div>
 
-      {/* Ride requests table */}
+  
       <div className="bg-white border-2 border-gray-200 shadow-sm rounded-xl p-6">
         <h2 className="text-xl font-semibold text-primary mb-4">
           Incoming Ride Requests
