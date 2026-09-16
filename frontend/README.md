@@ -7,9 +7,9 @@ Yatra is a ride, delivery and transport booking platform connecting passengers, 
 - Responsive UI (mobile-first design)
 
 ## Tech Stack
--**Frontend:** Next.js, React, Tailwind CSS
--**Backend:** Node.js, Express,TypeScript
--**Database:** MongoDB(via MongoDB Atlas)
+- **Frontend:** Next.js, React, Tailwind CSS
+- **Backend:** Node.js, Express,TypeScript
+- **Database:** MongoDB(via MongoDB Atlas)
 
 ## Getting Startedd
 
@@ -21,7 +21,7 @@ Yatra is a ride, delivery and transport booking platform connecting passengers, 
 ### Installation
 
 1. Clone the repositor:
-git clone https://github.com/bibekpandey999/Yatra.git 
+git clone `https://github.com/bibekpandey999/Yatra.git` 
 cd Yatra
 
 2. Install frontend dependencies:
@@ -48,4 +48,4 @@ frontend/
 
 ## Contributors
 - Shreejal Shrestha
-- Sushil Bhattarai
+- Sushil 
