@@ -6,7 +6,7 @@ import { TransportProvider } from '../models/TransportProvider.js';
 import Customer from '../models/Customer.js'
 
 
-export const registeraAdmin = async (req: Request, res: Response): Promise<Response> => {
+export const registerAdmin = async (req: Request, res: Response): Promise<Response> => {
     try {
 
         const { name, phone } = req.body;

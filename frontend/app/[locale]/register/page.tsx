@@ -1,69 +1,69 @@
 "use client";
-import { useState} from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function RegisterPage(){
-    const [name,setName]=useState("");
-    const [phone,setPhone]=useState("");
-    const [password,setPassword]=useState("");
-    const [role, setRole]= useState("rider");
+export default function RegisterPage() {
+    const [name, setName] = useState("");
+    const [phone, setPhone] = useState("");
+    const [password, setPassword] = useState("");
+    const [role, setRole] = useState("rider");
 
-    return(
-        
+    return (
+
         <div className="flex min-h-screen items-center justify-center bg-white">
-            <form 
-            onSubmit={(e)=>{
-                e.preventDefault();
-                console.log({name,phone,password,role});
-            }}
-           className="flex w-full flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-8 shadow-lg md:w-1/2 lg:w-1/3">
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    console.log({ name, phone, password, role });
+                }}
+                className="flex w-full flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-8 shadow-lg md:w-1/2 lg:w-1/3">
                 <Image src="/logo.png" alt="Yatra" width={100} height={35} className="mx-auto mb-2"
                 />
                 <h1 className="text-xl font-semibold text-primary"> Register</h1>
                 <input
-                type="text"
-                placeholder="Name"
-                value={name}
-                onChange={(e)=> setName(e.target.value)}
-                className=" border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
+                    type="text"
+                    placeholder="Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className=" border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
                 />
                 <input
-                type="tel"
-                placeholder="Phone number"
-                value={phone}
-                onChange={(e)=> setPhone(e.target.value)}
-                className=" border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
+                    type="tel"
+                    placeholder="Phone number"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className=" border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
                 />
-                 <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e)=> setPassword(e.target.value)}
-                className=" border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
+                <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className=" border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 placeholder:text-gray-400"
                 />
 
                 <select
-                value={role}
-                onChange={(e)=> setRole(e.target.value)}
-                className="border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 ">
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="border-2 border-gray-300 focus:border-primary focus:outline-none p-3 rounded-lg text-base text-gray-900 ">
                     <option
-                value="transporter">Rider</option>
+                        value="transporter">Rider</option>
                     <option
-                value="rider">Passenger</option>
-                <option value="booking-partner">Booking Partner</option>
+                        value="rider">Passenger</option>
+                    <option value="booking-partner">Booking Partner</option>
                 </select>
-               
+
                 <button
-                type="submit"
-            className="bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition w-full"
-            >
-                Register
+                    type="submit"
+                    className="bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark transition w-full"
+                >
+                    Register
                 </button>
-             <p className="text-sm text-gray-600 text-center">
+                <p className="text-sm text-gray-600 text-center">
                     Already have an account?{" "}
                     <Link href="/en/login" className="text-primary font-semibold">
-                    Login
+                        Login
                     </Link>
                 </p>
 

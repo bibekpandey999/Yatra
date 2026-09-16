@@ -6,19 +6,23 @@ import {
 } from "../controllers/CustomerController.js";
 
 import isAuthenticated from "../middleware/isAuthenticated.js";
+import isCustomer from "../middleware/isCustomer.js";
 
 const router = Router();
 
 router.post("/register", registerCustomer);
 router.post("/login", loginUser);
 router.post("/logout", logout);
-router.get("/get-profile", isAuthenticated, getCustomerProfile);
-router.post("/change-password", isAuthenticated, changeCustomerPassword);
-router.post("/update-profile",isAuthenticated,updateCustomerProfile);
-router.post("/request-ride",isAuthenticated,requestRide);
-router.post("/cancel-ride-request",isAuthenticated, cancelRideRequest);
-router.get("/get-ride-request/:id",isAuthenticated,getRideRequestStatus);
-router.get("/get-ride/:id",isAuthenticated,getCurrentRide);
-router.post("/cancel-ride",isAuthenticated, cancelRide);
-router.get("/get-ride-status/:id",isAuthenticated,getRideStatus);
-router.get("/get-matched-transporter",isAuthenticated,getMatchedTransporter);
+router.get("/get-profile", isAuthenticated,isCustomer, getCustomerProfile);
+router.post("/change-password", isAuthenticated, isCustomer, changeCustomerPassword);
+router.post("/update-profile",isAuthenticated, isCustomer, updateCustomerProfile);
+router.post("/request-ride",isAuthenticated,isCustomer, requestRide);
+router.post("/cancel-ride-request",isAuthenticated, isCustomer, cancelRideRequest);
+router.get("/get-ride-request/:id",isAuthenticated, isCustomer, getRideRequestStatus);
+router.get("/get-ride/:id",isAuthenticated,isCustomer, getCurrentRide);
+router.post("/cancel-ride",isAuthenticated, isCustomer, cancelRide);
+router.get("/get-ride-status/:id",isAuthenticated,isCustomer, getRideStatus);
+router.get("/get-matched-transporter",isAuthenticated ,isCustomer, getMatchedTransporter);
+
+
+export default router;

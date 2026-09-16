@@ -13,3 +13,6 @@ router.post("/logout",logout);
 router.get("/get-profile",isAuthenticated, getTransporterProfile);
 router.post("/change-password",isAuthenticated, changeTransporterPassword);
 router.post("/submit-kyc",isAuthenticated,submitKyc);
+
+
+export default router;

@@ -91,16 +91,16 @@ export const loginTransporter = async (req: Request, res: Response) => {
         }
 
         const token = jwt.sign(
-            { customerId: transporter._id, role: 'customer' },
+            { transporterId: transporter._id, role: 'transporter' },
             JWT_SECRET,
             { expiresIn: '7d' }
         )
 
-        const customerData = {
+        const transporterData = {
             id: transporter._id,
             name: transporter.name,
             phone: transporter.phone,
-            role: "customer",
+            role: "transporter",
             profileImage: transporter.profileImage?.url,
         }
 
@@ -113,7 +113,7 @@ export const loginTransporter = async (req: Request, res: Response) => {
         }).json({
             message: "Login successful",
             success: true,
-            customer: customerData
+            transporter: transporterData
         });
 
 
