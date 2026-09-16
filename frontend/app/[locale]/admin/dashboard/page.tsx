@@ -13,7 +13,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
+    <div className=" p-6 md:p-10">
       <h1 className="text-3xl font-bold text-primary mb-8">Admin Dashboard</h1>
 
       {/* Stats row */}
