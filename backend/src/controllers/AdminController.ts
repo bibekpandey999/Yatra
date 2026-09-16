@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import Admin from '../models/Admin'
+import Admin from '../models/Admin.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { TransportProvider } from '../models/TransportProvider';
-import Customer from '../models/Customer'
+import { TransportProvider } from '../models/TransportProvider.js';
+import Customer from '../models/Customer.js'
 
 
-export const registerCustomer = async (req: Request, res: Response): Promise<Response> => {
+export const registeraAdmin = async (req: Request, res: Response): Promise<Response> => {
     try {
 
         const { name, phone } = req.body;

@@ -1,5 +1,5 @@
 
-import { TransportProvider } from '../models/TransportProvider'
+import { TransportProvider } from '../models/TransportProvider.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { Request, Response } from "express";
@@ -55,7 +55,7 @@ export const registerTransporter = async (req: Request, res: Response) => {
 }
 
 
-export const loginUser = async (req: Request, res: Response) => {
+export const loginTransporter = async (req: Request, res: Response) => {
     try {
         const { phone, password } = req.body;
 

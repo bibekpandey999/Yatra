@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import Customer from '../models/Customer'
+import Customer from '../models/Customer.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { TransportProvider } from '../models/TransportProvider';
-import RideRequest from '../models/RideRequest'
+import { TransportProvider } from '../models/TransportProvider.js';
+import RideRequest from '../models/RideRequest.js';
 
 
 const generateOtp = () => {
@@ -152,6 +152,31 @@ export const logout = async (req: Request, res: Response) => {
 }
 
 
+export const getCustomerProfile = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const customerId = req.user?.customerId;
+        const customer = await Customer.findById(customerId).select("-password");
+
+        if (!customer) {
+            return res.status(404).json({
+                message: "Customer not found",
+                success: false
+            })
+        }
+
+        return res.status(200).json({
+            message:"Customer profile featched successfully",
+            success: true,
+            customer
+        })
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).send("Internal Server Error");
+    }
+}
+
+
 export const changeCustomerPassword = async (req: Request, res: Response): Promise<Response> => {
     try {
 
@@ -204,7 +229,7 @@ export const changeCustomerPassword = async (req: Request, res: Response): Promi
 }
 
 
-export const updateAdminProfile = async (req: Request, res: Response): Promise<Response> => {
+export const updateCustomerProfile = async (req: Request, res: Response): Promise<Response> => {
     try {
 
         const customerId = req.user?.customerId;
@@ -377,15 +402,6 @@ export const requestRide = async (req: Request, res: Response): Promise<Response
 }
 
 
-export const getPriceEstimate = async (req: Request, res: Response): Promise<Response> => {
-    try {
-
-    } catch (err) {
-
-    }
-}
-
-
 export const cancelRideRequest = async (req: Request, res: Response): Promise<Response> => {
     try {
         const rideRequestId = req.params.id;
@@ -442,6 +458,7 @@ export const cancelRideRequest = async (req: Request, res: Response): Promise<Re
         });
     }
 }
+
 
 export const getRideRequestStatus = async (req: Request, res: Response): Promise<Response> => {
     try {
