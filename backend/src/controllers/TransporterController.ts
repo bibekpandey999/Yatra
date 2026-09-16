@@ -59,7 +59,7 @@ export const registerTransporter = async (req: Request, res: Response) => {
 export const loginTransporter = async (req: Request, res: Response) => {
     try {
         const { phone, password } = req.body;
-
+    
         if (!phone || !password) {
             return res.status(400).json({
                 message: "All fields are required",

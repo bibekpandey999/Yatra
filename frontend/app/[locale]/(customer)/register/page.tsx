@@ -2,11 +2,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
+
+    const router=  useRouter();
 
      const handleRegister = async (e: React.FormEvent) => {
         try {
@@ -29,7 +32,7 @@ export default function RegisterPage() {
                 return
             }
 
-            console.log("register success: ", data);
+            router.push("/en/login")
 
         } catch (err) {
             console.log("Error at login logic :", err)

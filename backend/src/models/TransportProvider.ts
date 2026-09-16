@@ -43,17 +43,16 @@ const transportProviderSchema = new mongoose.Schema(
                 type: String,
                 enum: ["Point"],
                 default: "Point",
-                required: true
             },
             coordinates: {
                 type: [Number],  // [longitude, latitude]
                 required: true,
             },
 
-            address: { type: String, required: true },
-            province: { type: String, required: true },
-            district: { type: String, required: true },
-            municipality: { type: String, required: true },
+            address: { type: String,  },
+            province: { type: String,  },
+            district: { type: String,  },
+            municipality: { type: String, },
             ward: { type: String, }
         },
 

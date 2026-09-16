@@ -8,9 +8,7 @@ import Customer from '../models/Customer.js'
 
 export const registerAdmin = async (req: Request, res: Response): Promise<Response> => {
     try {
-
         const { name, phone } = req.body;
-
         const adminPassword = process.env.ADMIN_PASSWORD;
 
         if (!name || !phone || !adminPassword) {
