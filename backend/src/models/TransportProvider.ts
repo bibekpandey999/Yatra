@@ -11,17 +11,6 @@ const transportProviderSchema = new mongoose.Schema(
             minlength: [4, "Transporter name must consist at least 4 characters"],
         },
 
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            lowercase: true,
-            validate: {
-                validator: (value: string) => validator.isEmail(value),
-                message: "Invalid email format",
-            },
-        },
-
         password: {
             type: String,
             required: true,
@@ -44,7 +33,11 @@ const transportProviderSchema = new mongoose.Schema(
                 default: "",
             },
         },
-
+        role:{
+            type: String,
+            enum: ["rider","booking-partner"],
+            default: "rider"
+        },
         location:  {
             type: {
                 type: String,

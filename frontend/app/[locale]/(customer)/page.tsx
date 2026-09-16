@@ -69,55 +69,40 @@ export default function Home() {
       </section>
 
       <section>
-        <div className="my-20 bg-white flex flex-col items-center justify-center px-6 gap-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary text-center">
+        <div className="my-20 flex flex-col items-center justify-center gap-10 bg-white px-6">
+          <h1 className="text-center text-3xl font-bold text-primary md:text-4xl">
             How do you want to use Yatra?
           </h1>
 
-          <div className="flex flex-col md:flex-row gap-6 w-full max-w-3xl">
-
+          <div className="flex w-full max-w-4xl flex-col gap-6 md:flex-row">
+  
             <Link
-              href="/en/register"
-              className="flex-1 shadow-lg rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
+              href="/en/transporter/register"
+              className="flex-1 rounded-2xl border border-gray-100 p-6 text-center shadow-lg transition hover:-translate-y-1 hover:shadow-xl"
             >
-              <Car className="mx-auto text-primary mb-3" size={32} />
-
-              <h3 className="font-semibold text-primary text-lg mb-2">
-                Rider
-              </h3>
-
-              <p className="text-text-muted text-sm">
-                Book rides and deliveries across the city.
-              </p>
-
+              <Car className="mx-auto mb-3 text-primary" size={32} />
+              <h3 className="mb-2 text-lg font-semibold text-primary"> Rider </h3>
+              <p className="text-sm text-text-muted">  Provide ride and delivery services. </p>
             </Link>
 
+  
             <Link
               href="/en/register"
-              className="flex-1 shadow-lg rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
+              className="flex-1 rounded-2xl border border-gray-100 p-6 text-center shadow-lg transition hover:-translate-y-1 hover:shadow-xl"
             >
-              <Package className="mx-auto text-primary mb-3" size={32} />
-              <h3 className="font-semibold text-primary text-lg mb-2">
-                Delivery Partner
-              </h3>
-              <p className="text-text-muted text-sm">
-                Deliver parcels and earn on your own schedule.
-              </p>
-
+              <Package className="mx-auto mb-3 text-primary" size={32} />
+              <h3 className="mb-2 text-lg font-semibold text-primary"> Passenger </h3>
+              <p className="text-sm text-text-muted"> Book a ride and travel to your destination. </p>
             </Link>
 
+  
             <Link
-              href="/en/register"
-              className="flex-1 shadow-lg rounded-2xl border border-gray-100 p-6 text-center hover:shadow-xl hover:-translate-y-1 transition"
+              href="/en/transporter/register"
+              className="flex-1 rounded-2xl border border-gray-100 p-6 text-center shadow-lg transition hover:-translate-y-1 hover:shadow-xl"
             >
-              <Truck className="mx-auto text-primary mb-3" size={32} />
-              <h3 className="font-semibold text-primary text-lg mb-2">
-                Bus/Truck Provider
-              </h3>
-
-              <p className="text-text-muted text-sm">
-                List your vehicles for rentals and bookings.
-              </p>
+              <Truck className="mx-auto mb-3 text-primary" size={32} />
+              <h3 className="mb-2 text-lg font-semibold text-primary"> Bus/Truck Provider </h3>
+              <p className="text-sm text-text-muted">  List your vehicles for rentals and bookings. </p>
             </Link>
           </div>
         </div>

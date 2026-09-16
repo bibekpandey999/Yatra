@@ -11,7 +11,7 @@ const generateOtp = () => {
 export const registerTransporter = async (req: Request, res: Response) => {
     try {
 
-        const { name, phone, password } = req.body;
+        const { name, phone, password ,role } = req.body;
 
         if (!name || !phone || !password) {
             return res.status(400).json({
@@ -34,7 +34,8 @@ export const registerTransporter = async (req: Request, res: Response) => {
         const newUser = new TransportProvider({
             name,
             phone,
-            hashedPassword
+            password: hashedPassword,
+            role
         })
 
         await newUser.save();

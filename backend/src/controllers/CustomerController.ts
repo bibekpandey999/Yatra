@@ -15,6 +15,8 @@ export const registerCustomer = async (req: Request, res: Response) => {
     try {
 
         const { name, phone, password } = req.body;
+        console.log(name, phone, password)
+        console.log("i am here")
 
         if (!name || !phone || !password) {
             return res.status(400).json({
@@ -37,7 +39,7 @@ export const registerCustomer = async (req: Request, res: Response) => {
         const newUser = new Customer({
             name,
             phone,
-            hashedPassword
+            password: hashedPassword
         })
 
         await newUser.save();
