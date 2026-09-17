@@ -3,7 +3,26 @@ import Admin from '../models/Admin.js'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { TransportProvider } from '../models/TransportProvider.js';
-import Customer from '../models/Customer.js'
+import Customer from '../models/Customer.js';
+import { Ride } from '../models/Ride.js';
+
+export const getAllRides = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const rides = await Ride.find()
+            .populate("customer", "name phone")
+            .populate("transporter", "name phone vehicle")
+            .sort({ requestedAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: rides.length,
+            rides,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+}
 
 
 export const registerAdmin = async (req: Request, res: Response): Promise<Response> => {
@@ -630,15 +649,6 @@ export const getCustomerRideHistory = async (req: Request, res: Response): Promi
     }
 }
 
-export const getAllRides = async (req: Request, res: Response): Promise<Response> => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ message: "Internal Server Error", success: false });
-    }
-}
-
 export const getRideById = async (req: Request, res: Response): Promise<Response> => {
     try {
 
@@ -696,4 +706,3 @@ export const getCompletedRides = async (req: Request, res: Response): Promise<Re
         return res.status(500).json({ message: "Internal Server Error", success: false });
     }
 }
-
