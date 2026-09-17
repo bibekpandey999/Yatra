@@ -3,7 +3,7 @@ import {
     registerAdmin, loginAdmin, logout, getAdminProfile,
     updateAdminProfile, changeAdminPassword, getAllTransportProviders, deleteTransportProvider,
     getTransportProviderById, verifyTransportProviderKYC, rejectTransportProviderKYC, blockUnBlockTransportProvider, getPendingKYCProviders,
-    getBlockedTransportProviders, getAllCustomers, getCustomerById, blockUnBlockCustomer, deleteCustomer, getAllRides, getRideById
+    getBlockedTransportProviders, getAllCustomers, getCustomerById, blockUnBlockCustomer, deleteCustomer, getAllRides, getRideById, getActiveRides
 } from "../controllers/AdminController.js";
 
 import isAuthenticated from "../middleware/isAuthenticated.js";
@@ -34,7 +34,7 @@ router.delete("/customer/:id", isAuthenticated, isAdmin, deleteCustomer);
 
 router.get("/rides", isAuthenticated,isAdmin,getAllRides);
 router.get("/ride/:id",isAuthenticated,isAdmin,getRideById);
-
+router.get("/rides/active",isAuthenticated,isAdmin,getActiveRides);
 
 
 export default router;

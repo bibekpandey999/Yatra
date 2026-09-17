@@ -674,15 +674,26 @@ export const getRideById = async (req: Request, res: Response): Promise<Response
     }
 }
 
-export const getActiveRides = async (req: Request, res: Response): Promise<Response> => {
-    try {
+export const getActiveRides = async (req: Request, res:Response):Promise<Response> =>{
+    try{
+        const rides=await Ride.find ({
+            status:{$in:["confirmed", "driver_arriving", "driver_arrived", "started"] }
 
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ message: "Internal Server Error", success: false });
+        })
+         .populate("customer","name phone")
+         .populate("transporter","name phone vehicle")
+         .sort({requestedAt:-1});
+
+         return res.status(200).json({
+            success:true,
+            count:rides.length,
+            rides,
+         });
+    } catch(err){
+        console.log(err);
+        return res.status(500).json({message:"Internal Server Error",success:false});
     }
 }
-
 
 export const viewRideDetails = async (req: Request, res: Response): Promise<Response> => {
     try {
