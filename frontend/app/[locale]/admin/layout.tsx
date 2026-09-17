@@ -8,6 +8,7 @@ import {
   Route,
   UserCircle,
   LogOut,
+  Lock
 } from "lucide-react";
 
 const navItems = [
@@ -16,6 +17,8 @@ const navItems = [
   { label: "Customers", href: "/en/admin/customers", icon: Users },
   { label: "Rides", href: "#", icon: Route, disabled: true },
   { label: "Profile", href: "/en/admin/profile", icon: UserCircle },
+  { label: "Password", href:"/en/admin/profile/passwordChange", icon:Lock }
+
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
