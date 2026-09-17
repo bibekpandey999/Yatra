@@ -639,15 +639,6 @@ export const deleteCustomer = async (req: Request, res: Response): Promise<Respo
     }
 }
 
-export const getCustomerRideHistory = async (req: Request, res: Response): Promise<Response> => {
-    try {
-
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ message: "Internal Server Error", success: false });
-    }
-}
-
 export const getRideById = async (req: Request, res: Response): Promise<Response> => {
     try {
         const id = req.params.id;
@@ -695,12 +686,26 @@ export const getActiveRides = async (req: Request, res:Response):Promise<Respons
     }
 }
 
-export const viewRideDetails = async (req: Request, res: Response): Promise<Response> => {
-    try {
+export const viewRideDetails = async (req:Request, res:Response): Promise<Response> => {
+    try{
+        const id=req.params.id;
+        const ride=await Ride.findById(id)
+             .populate("customer", "name phone")
+             .populate("transporter", "name phone vehicle");
 
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ message: "Internal Server Error", success: false });
+             if(!ride) {
+                return res.status(404).json({
+                    success:false,
+                    message: "Ride not found",
+                });
+             }
+             return res.status(200).json({
+                success:true,
+                ride,
+             });
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({message:"Internal Server Error",success:false});
     }
 }
 
