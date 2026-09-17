@@ -1,13 +1,13 @@
-import mongoose from 'mongoose';               
-import dotenv from 'dotenv';   
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-dotenv.config(); 
+dotenv.config();
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.MONGO_URI, {
-            serverSelectionTimeoutMS: 15000 ,// Increase timeout to 30 seconds
-            socketTimeoutMS: 160000,  // Increase socket timeout to 60 seconds
+        await mongoose.connect(process.env.MONGODB_URI, {
+            serverSelectionTimeoutMS: 15000, // Increase timeout to 15 seconds
+            socketTimeoutMS: 160000,  // Increase socket timeout
             connectTimeoutMS: 160000
         });
        console.log('Connected to MongoDB');
@@ -16,4 +16,4 @@ const connectDB = async () => {
     }
 };
 
-export default connectDB; 
+export default connectDB;
