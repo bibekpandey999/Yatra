@@ -58,4 +58,4 @@ Yatra/
 
 ## Contributors
 - Shreejal Shrestha
-- Sushil
+- Sushil Bhattarai

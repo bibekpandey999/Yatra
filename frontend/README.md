@@ -48,4 +48,4 @@ frontend/
 
 ## Contributors
 - Shreejal Shrestha
-- Sushil 
+- Sushil Bhattarai
