@@ -715,12 +715,21 @@ export const getCancelRideById = async (req: Request, res: Response): Promise<Re
 }
 
 
-export const getCancelledRides = async (req: Request, res: Response): Promise<Response> => {
+export const getCancelledRides = async (req:Request, res:Response):Promise<Response> =>{
     try {
+        const rides=await Ride.find ({status:"cancelled"})
+             .populate("customer", "name phone")
+             .populate("transporter", "name phone vehicle")
+             .sort({cancelledAt:-1});
 
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ message: "Internal Server Error", success: false });
+             return res.status(200).json({
+                success:true,
+                count:rides.length,
+                rides,
+             });
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({message:"Internal Server Error",success:false});
     }
 }
 
