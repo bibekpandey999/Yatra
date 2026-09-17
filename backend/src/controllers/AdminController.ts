@@ -710,12 +710,32 @@ export const viewRideDetails = async (req:Request, res:Response): Promise<Respon
 }
 
 
-export const getCancelRideById = async (req: Request, res: Response): Promise<Response> => {
-    try {
+export const getCancelRideById = async (req:Request, res:Response): Promise<Response> => {
+    try{
+        const id= req.params.id;
+        const ride= await Ride.findById(id)
+             .populate("customer", "name phone")
+             .populate("transporter","name phone vehicle");
 
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({ message: "Internal Server Error", success: false });
+             if(!ride){
+                return res.status(404).json({
+                    success:false,
+                    message: "Ride not found",
+                });
+             }
+             if(ride.status !=="cancelled"){
+                return res.status(400).json({
+                    success:false,
+                    message:"This ride is not cancelled",
+                });
+             }
+             return res.status(200).json({
+                success:true,
+                ride,
+             });
+    } catch(err){
+        console.log(err);
+        return res.status(500).json({message:"Internal Server Error", success:false});
     }
 }
 
