@@ -1,7 +1,7 @@
 import { Router } from "express";
 import {
     registerAdmin, loginAdmin, logout, getAdminProfile,
-    updateAdminProfile, changeAdminPassword, getAllTransportProviders, deleteTransportProvider,
+    updateAdminProfile, changeAdminPassword, getAllTransportersVerified, deleteTransportProvider,
     getTransportProviderById, verifyTransportProviderKYC, rejectTransportProviderKYC, blockUnBlockTransportProvider, getPendingKYCProviders,
     getBlockedTransportProviders, getAllCustomers, getCustomerById, blockUnBlockCustomer, deleteCustomer, getAllRides, getRideById, getActiveRides, getCancelledRides, getCompletedRides, viewRideDetails, getCancelRideById,
     getDashboardStats
@@ -18,7 +18,7 @@ router.get("/get-profile", isAuthenticated, isAdmin, getAdminProfile);
 router.post("/update-profile", isAuthenticated, isAdmin, updateAdminProfile);
 router.post("/change-password", isAuthenticated, isAdmin, changeAdminPassword);
 
-router.get("/transport-providers", isAuthenticated, isAdmin, getAllTransportProviders);
+router.get("/transport-providers", isAuthenticated, isAdmin, getAllTransportersVerified);
 router.get("/transport-provider/:id", isAuthenticated, isAdmin, getTransportProviderById);
 router.get("/transport-providers/pending-kyc", isAuthenticated, isAdmin, getPendingKYCProviders);
 router.get("/transport-providers/blocked", isAuthenticated, isAdmin, getBlockedTransportProviders);

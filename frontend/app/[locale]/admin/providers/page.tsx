@@ -1,9 +1,51 @@
+"use client"
+import { useEffect, useState } from "react";
+
+interface Provider {
+  _id: string;
+  name: string;
+  phone: string;
+  vehicle: string;
+  isKycCompleted: boolean;
+  isKycDataSubmitted: boolean;
+  isVerified: boolean;
+  isBlocked: boolean;
+  verificationStatus: "pending"| "approved"| "rejected"
+}
+
+
+
 export default function AdminProviders() {
-  const providers = [
-    { name: "Niten Thapa", phone: "9812345678", vehicle: "Bus", kyc: "Pending", blocked: false },
-    { name: "Sahil Gurung", phone: "9801234567", vehicle: "Car", kyc: "Approved", blocked: false },
-    { name: "Samir Rana Magar", phone: "9801442366", vehicle: "Truck", kyc: "Pending", blocked: true },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [providers, setProviders] = useState<Provider[]>([])
+
+  useEffect(() => {
+    const handlePendingKyc = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/admin/dashboard/transport-providers", {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store"
+        })
+
+        const data = await res.json();
+        if (data.success) {
+          setProviders(data.transporters);
+        }
+      } catch (err) {
+        console.log("Failed to fetch pending kyc: ", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    handlePendingKyc();
+
+  }, [])
+
+
+
   return (
     <div className="p-6 md:p-10">
       <h1 className="text-3xl font-bold text-primary mb-8"> Transport Providers </h1>
@@ -30,57 +72,57 @@ export default function AdminProviders() {
               </tr>
             </thead>
             <tbody>
-              {providers.map((provider) => (
-                <tr
-                  key={provider.phone}
-                  className="border-b border-gray-100">
-                  <td className="py-3 px-2 text-gray-900">
-                    {provider.name}
-                  </td>
-                  <td className="py-3 px-2 text-gray-900">
-                    {provider.phone}
-                  </td>
-                  <td className="py-3 px-2 text-gray-900">
-                    {provider.vehicle}
-                  </td>
-                  <td className="py-3 px-2">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${provider.kyc === "Approved"
+              {loading ? (
+                <tr> <td colSpan={6} className="py-8 text-center text-gray-500" > Loading transport providers... </td> </tr>
+              ) : providers.length === 0 ? (
+                <tr> <td colSpan={6} className="py-8 text-center text-gray-500" > No transport providers found. </td> </tr>
+              ) : (
+
+                providers.map((provider) => (
+                  <tr key={provider.phone} className="border-b border-gray-100">
+                    <td className="py-3 px-2 text-gray-900"> {provider.name} </td>
+                    <td className="py-3 px-2 text-gray-900"> {provider.phone} </td>
+                    <td className="py-3 px-2 text-gray-900"> {provider.vehicle || "N/A"} </td>
+                    <td className="py-3 px-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${provider.verificationStatus === "approved"
                           ? "bg-success/20 text-success"
                           : "bg-warning/20 text-warning"
-                        }`}
-                    >
-                      {provider.kyc}
-                    </span>
-                  </td>
-                  <td className="py-3 px-2">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-semibold ${provider.blocked ? "bg-error/20 text-error" : "bg-success/20 text-success"
-                        }`}
-                    >
-                      {provider.blocked ? "Blocked" : "Active"}
-                    </span>
-                  </td>
-                  <td className="py-3 px-2 flex flex-wrap gap-2">
-                    {provider.kyc === "Pending" && (
-                      <>
-                        <button className="bg-accent text-white px-3 py-1 rounded-lg text-sm hover:bg-accent-dark transition">
-                          Verify
-                        </button>
-                        <button className="bg-error text-white px-3 py-1 rounded-lg text-sm hover:opacity-90 transition">
-                          Reject
-                        </button>
-                      </>
-                    )}
-                    <button className="bg-gray-700 text-white px-3 py-1 rounded-lg text-sm hover:opacity-90 transition">
-                      {provider.blocked ? "Unblock" : "Block"}
-                    </button>
-                    <button className="border border-error text-error px-3 py-1 rounded-lg text-sm hover:bg-error/10 transition">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                          }`}
+                      >
+                        {provider.verificationStatus}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${provider.isBlocked ? "bg-error/20 text-error" : "bg-success/20 text-success"
+                          }`}
+                      >
+                        {provider.isBlocked ? "Blocked" : "Active"}
+                      </span>
+                    </td>
+                    <td className="py-3 px-2 flex flex-wrap gap-2">
+                      {provider.verificationStatus === "pending" && (
+                        <>
+                          <button className="bg-accent text-white px-3 py-1 rounded-lg text-sm hover:bg-accent-dark transition">
+                            Verify
+                          </button>
+                          <button className="bg-error text-white px-3 py-1 rounded-lg text-sm hover:opacity-90 transition">
+                            Reject
+                          </button>
+                        </>
+                      )}
+                      <button className="bg-gray-700 text-white px-3 py-1 rounded-lg text-sm hover:opacity-90 transition">
+                        {provider.isBlocked ? "Unblock" : "Block"}
+                      </button>
+                      <button className="border border-error text-error px-3 py-1 rounded-lg text-sm hover:bg-error/10 transition">
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )
+              }
             </tbody>
           </table>
         </div>

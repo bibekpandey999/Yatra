@@ -264,7 +264,7 @@ export const changeAdminPassword = async (req: Request, res: Response): Promise<
 
 }
 
-export const getAllTransportProviders = async (req: Request, res: Response): Promise<Response> => {
+export const getAllTransportersVerified = async (req: Request, res: Response): Promise<Response> => {
     try {
         const allTransportProviders = await TransportProvider.find().select('-password');
         return res.status(200).json({
