@@ -613,8 +613,32 @@ export const cancelRide = async (req: Request, res: Response): Promise<Response>
         });
     }
 }
+
 export const getRideStatus = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const rideId = req.params.id;
+        const customerId = req.user?.customerId;
+
+        const ride = await Ride.findById(rideId);
+
+        if (!ride) {
+            return res.status(404).json({
+                message: "Ride not found",
+                success: false,
+            });
+        }
+
+        if (ride.customer.toString() !== customerId) {
+            return res.status(403).json({
+                message: "You are not authorized to access this ride's information",
+                success: false,
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            status: ride.status,
+        });
 
     } catch (err) {
         console.error(err);
@@ -622,6 +646,5 @@ export const getRideStatus = async (req: Request, res: Response): Promise<Respon
             message: "Internal Server Error",
             success: false,
         });
-
     }
 }
