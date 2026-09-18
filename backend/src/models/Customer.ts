@@ -40,10 +40,6 @@ const CustomerSchema = new mongoose.Schema({
             default: [85.3240, 27.7172],
         },
     },
-    isVerified: {
-        type: Boolean,
-        default: false
-    },
     isBlocked: {
         type: Boolean,
         default: false

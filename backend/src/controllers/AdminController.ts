@@ -524,7 +524,6 @@ export const getAllCustomers = async (req: Request, res: Response): Promise<Resp
     try {
 
         const customers = await Customer.find().select("-password");
-
         return res.status(200).json({
             success: true,
             count: customers.length,

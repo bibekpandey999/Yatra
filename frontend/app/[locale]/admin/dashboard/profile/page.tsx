@@ -19,21 +19,8 @@ const AdminProfile = () => {
 
   return (
     <div className="min-h-screen text-[#0A0A0A] bg-gray-100 pb-12 pt-6">
-      <div className="max-w-5xl mx-auto px-4">
-        <div className="mb-8">
-          <button
-            type="button"
-            onClick={() => router.back()}
-            className="flex items-center gap-3 text-gray-500 hover:text-black transition"
-          >
-            <div className="p-2.5 rounded-xl bg-white/5 hover:bg-black">
-              <ArrowLeft size={18} />
-            </div>
-
-            Dashboard
-          </button>
-        </div>
-
+      <div className="max-w-5xl mx-auto px-4 flex justify-start items-center">
+   
         <div className="bg-[#ffffff] rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
           <div className="p-8 pb-10">
             <div className="flex flex-col md:flex-row items-center gap-8 mb-12">

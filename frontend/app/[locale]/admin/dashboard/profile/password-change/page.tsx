@@ -136,26 +136,12 @@ const AdminPasswordChange = () => {
         ];
 
     return (
-        <div className="min-h-screen text-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden bg-slate-200">
+        <div className="min-h-screen text-slate-950 flex flex-col items-center justify-center p-4 relative overflow-hidden bg-slate-100">
 
-            <div className="absolute top-6 left-6 z-20">
-                <button
-                    type="button"
-                    onClick={() => router.back()}
-                    className="group flex items-center gap-3 text-slate-400 hover:text-white transition-all font-medium"
-                >
-                    <div className="p-2 bg-slate-600 rounded-xl   ">
-                        <ArrowLeft size={18} />
-                    </div>
+          
 
-                    <span className="hidden sm:inline text-gray-600">
-                        Back to Dashboard
-                    </span>
-                </button>
-            </div>
-
-            <div className=" w-2/5 rounded-[2.5rem] shadow-2xl shadow-black/50 overflow-hidden ">
-                <div className="p-8 md:p-12 bg-white">
+            <div className=" w-full max-w-md sm:max-w-lg rounded-[2.5rem] shadow-2xl shadow-black/50 overflow-hidden ">
+                <div className="p-6 sm:p-8 md:p-10 lg:12 bg-[#ffffff] ">
 
                     <h2 className="text-2xl  font-bold mb-8 text-gray-700"> Change Password </h2>
 
