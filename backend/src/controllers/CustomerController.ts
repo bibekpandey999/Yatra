@@ -567,6 +567,43 @@ export const getCurrentRide = async (req: Request, res: Response): Promise<Respo
 
 export const cancelRide = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const rideId = req.params.id;
+        const customerId = req.user?.customerId;
+
+        const ride = await Ride.findById(rideId);
+
+        if (!ride) {
+            return res.status(404).json({
+                message: "Ride not found",
+                success: false,
+            });
+        }
+
+        if (ride.customer.toString() !== customerId) {
+            return res.status(403).json({
+                message: "You are not authorized to cancel this ride",
+                success: false,
+            });
+        }
+
+        if (ride.status === "completed" || ride.status === "cancelled") {
+            return res.status(400).json({
+                message: `Ride cannot be cancelled because it is already ${ride.status}`,
+                success: false,
+            });
+        }
+
+        ride.status = "cancelled";
+        ride.cancelledBy = "customer";
+        ride.cancelledAt = new Date();
+
+        await ride.save();
+
+        return res.status(200).json({
+            message: "Ride cancelled successfully",
+            success: true,
+            ride,
+        });
 
     } catch (err) {
         console.error(err);
@@ -574,10 +611,8 @@ export const cancelRide = async (req: Request, res: Response): Promise<Response>
             message: "Internal Server Error",
             success: false,
         });
-
     }
 }
-
 export const getRideStatus = async (req: Request, res: Response): Promise<Response> => {
     try {
 
