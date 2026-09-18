@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { TransportProvider } from '../models/TransportProvider.js';
 import RideRequest from '../models/RideRequest.js';
+import { Ride } from '../models/Ride.js';
 
 
 const generateOtp = () => {
@@ -507,15 +508,29 @@ export const getRideRequestStatus = async (req: Request, res: Response): Promise
 }
 
 export const getMatchedTransporter = async (req: Request, res: Response): Promise<Response> => {
-    try {
+    try{
+        const rideRequestId=req.params.id;
+        const customerId=req.user?.customerId;
 
-    } catch (err) {
+        const ride = await Ride.findOne({rideRequest:rideRequestId,customer:customerId})
+                 .populate("transporter","name phone vehicle");
+                 if(!ride){
+                    return res.status(200).json({
+                        message:"No matched transporter found for this request yet",
+                        success:false,
+                    });
+                 }
+                 return res.status(200).json({
+                    success:true,
+                    transporter:ride.transporter,
+                 });
+
+    }catch(err){
         console.error(err);
         return res.status(500).json({
-            message: "Internal Server Error",
-            success: false,
+            message:"Internal Server Error",
+            success:false,
         });
-
     }
 }
 
