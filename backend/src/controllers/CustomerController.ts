@@ -537,6 +537,24 @@ export const getMatchedTransporter = async (req: Request, res: Response): Promis
 
 export const getCurrentRide = async (req: Request, res: Response): Promise<Response> => {
     try {
+        const customerId = req.user?.customerId;
+
+        const ride = await Ride.findOne({
+            customer: customerId,
+            status: { $in: ["confirmed", "driver_arriving", "driver_arrived", "started"] }
+        }).populate("transporter", "name phone vehicle");
+
+        if (!ride) {
+            return res.status(404).json({
+                message: "No current ride in progress",
+                success: false,
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            ride,
+        });
 
     } catch (err) {
         console.error(err);
@@ -544,10 +562,8 @@ export const getCurrentRide = async (req: Request, res: Response): Promise<Respo
             message: "Internal Server Error",
             success: false,
         });
-
     }
 }
-
 
 export const cancelRide = async (req: Request, res: Response): Promise<Response> => {
     try {
