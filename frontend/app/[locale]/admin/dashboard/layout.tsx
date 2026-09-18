@@ -10,19 +10,42 @@ import {
   LogOut,
   Lock
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const navItems = [
   { label: "Overview", href: "/en/admin/dashboard", icon: LayoutDashboard },
-  { label: "Providers", href: "/en/admin/providers", icon: Truck },
-  { label: "Customers", href: "/en/admin/customers", icon: Users },
+  { label: "Providers", href: "/en/admin/dashboard/providers", icon: Truck },
+  { label: "Customers", href: "/en/admin/dashboard/customers", icon: Users },
   { label: "Rides", href: "#", icon: Route, disabled: true },
-  { label: "Profile", href: "/en/admin/profile", icon: UserCircle },
-  { label: "Password", href:"/en/admin/profile/passwordChange", icon:Lock }
+  { label: "Profile", href: "/en/admin/dashboard/profile", icon: UserCircle },
+  { label: "Password", href: "/en/admin/dashboard/profile/password-change", icon: Lock }
 
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch("/api/logout", {
+        method: "POST",
+        credentials: "include"
+      })
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        router.push("/en/admin/login");
+        router.refresh();
+      } else {
+        console.error(data.message || "Logout failed");
+      }
+
+    } catch (err) {
+      console.log(err || "logout failed: ")
+    }
+  }
 
   return (
     <div className="min-h-screen flex bg-gray-50">
@@ -38,13 +61,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.label}
                 href={item.disabled ? "#" : item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${
-                  item.disabled
-                    ? "text-gray-400 cursor-not-allowed"
-                    : isActive
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition ${item.disabled
+                  ? "text-gray-400 cursor-not-allowed"
+                  : isActive
                     ? "bg-primary/10 text-primary font-semibold"
                     : "text-gray-600 hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 <Icon size={18} />
                 {item.label}
@@ -55,7 +77,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             );
           })}
         </nav>
-        <button className="mt-auto flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition">
+        <button onClick={handleLogout} className="mt-auto flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition">
           <LogOut size={18} />
           Log out
         </button>

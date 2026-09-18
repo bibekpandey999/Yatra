@@ -73,9 +73,13 @@ export default function AdminProviders() {
             </thead>
             <tbody>
               {loading ? (
-                <tr> <td colSpan={6} className="py-8 text-center text-gray-500" > Loading transport providers... </td> </tr>
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-gray-500" > Loading transport providers...</td>
+                </tr>
               ) : providers.length === 0 ? (
-                <tr> <td colSpan={6} className="py-8 text-center text-gray-500" > No transport providers found. </td> </tr>
+                <tr> 
+                  <td colSpan={6} className="py-8 text-center text-gray-500" > No transport providers found.</td>
+                </tr>
               ) : (
 
                 providers.map((provider) => (
