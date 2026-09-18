@@ -1,10 +1,53 @@
+"use client"
+
+import { useEffect, useState } from "react";
+
+interface StatsProps {
+  totalCustomers: number,
+  totalTransporters: number,
+  kycPending: number,
+  activeRides: number
+}
+
 export default function AdminDashboard() {
-  const stats = [
-    { label: "Total Customers", value: 128 },
-    { label: "Transport Providers", value: 34 },
-    { label: "Pending KYC", value: 6 },
-    { label: "Active Rides", value: 12 },
-  ];
+
+  const [stats, setStats] = useState<StatsProps>({
+    totalCustomers: 0,
+    totalTransporters: 0,
+    kycPending: 0,
+    activeRides: 0
+  });
+
+  const [loadingStat, setLoadingStat] = useState(false);
+
+
+  useEffect(() => {
+
+    const handleStats = async () => {
+      try {
+        setLoadingStat(true);
+        const res = await fetch("/api/admin/dashboard-stats", {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store"
+        })
+
+        const data = await res.json();
+        if (data.success) {
+          setStats(data.stats);
+        }
+
+      } catch (err) {
+        console.log("Failed to fetch dashboard stats: ", err)
+      } finally {
+        setLoadingStat(false);
+      }
+    };
+
+
+    handleStats();
+  }, []);
+
 
   const pendingProviders = [
     { name: "Niten Thapa", phone: "9812345678", vehicle: "Bus", status: "Pending" },
@@ -12,17 +55,36 @@ export default function AdminDashboard() {
     { name: "Samir Rana Magar", phone: "9801442366", vehicle: "Truck", status: "Pending" },
   ];
 
+  const statCards = [
+    {
+        label: "Total Customers",
+        value: stats.totalCustomers,
+    },
+    {
+        label: "Transport Providers",
+        value: stats.totalTransporters,
+    },
+    {
+        label: "Pending KYC",
+        value: stats.kycPending,
+    },
+    {
+        label: "Active Rides",
+        value: stats.activeRides,
+    },
+];
+
   return (
     <div className=" p-6 md:p-10">
       <h1 className="text-3xl font-bold text-primary mb-8">Admin Dashboard</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        {stats.map((stat) => (
+        {statCards.map((stat) => (
           <div
             key={stat.label}
             className="bg-white border-2 border-gray-200 shadow-sm rounded-xl p-6 text-center"
           >
-            <div className="text-3xl font-bold text-primary">{stat.value}</div>
+            <div className="text-3xl font-bold text-primary">{loadingStat ? "..." : stat.value}</div>
             <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
           </div>
         ))}

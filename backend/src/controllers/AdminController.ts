@@ -665,114 +665,154 @@ export const getRideById = async (req: Request, res: Response): Promise<Response
     }
 }
 
-export const getActiveRides = async (req: Request, res:Response):Promise<Response> =>{
-    try{
-        const rides=await Ride.find ({
-            status:{$in:["confirmed", "driver_arriving", "driver_arrived", "started"] }
+export const getActiveRides = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const rides = await Ride.find({
+            status: { $in: ["confirmed", "driver_arriving", "driver_arrived", "started"] }
 
         })
-         .populate("customer","name phone")
-         .populate("transporter","name phone vehicle")
-         .sort({requestedAt:-1});
-
-         return res.status(200).json({
-            success:true,
-            count:rides.length,
-            rides,
-         });
-    } catch(err){
-        console.log(err);
-        return res.status(500).json({message:"Internal Server Error",success:false});
-    }
-}
-
-export const viewRideDetails = async (req:Request, res:Response): Promise<Response> => {
-    try{
-        const id=req.params.id;
-        const ride=await Ride.findById(id)
-             .populate("customer", "name phone")
-             .populate("transporter", "name phone vehicle");
-
-             if(!ride) {
-                return res.status(404).json({
-                    success:false,
-                    message: "Ride not found",
-                });
-             }
-             return res.status(200).json({
-                success:true,
-                ride,
-             });
-    }catch(err){
-        console.log(err);
-        return res.status(500).json({message:"Internal Server Error",success:false});
-    }
-}
-
-
-export const getCancelRideById = async (req:Request, res:Response): Promise<Response> => {
-    try{
-        const id= req.params.id;
-        const ride= await Ride.findById(id)
-             .populate("customer", "name phone")
-             .populate("transporter","name phone vehicle");
-
-             if(!ride){
-                return res.status(404).json({
-                    success:false,
-                    message: "Ride not found",
-                });
-             }
-             if(ride.status !=="cancelled"){
-                return res.status(400).json({
-                    success:false,
-                    message:"This ride is not cancelled",
-                });
-             }
-             return res.status(200).json({
-                success:true,
-                ride,
-             });
-    } catch(err){
-        console.log(err);
-        return res.status(500).json({message:"Internal Server Error", success:false});
-    }
-}
-
-
-export const getCancelledRides = async (req:Request, res:Response):Promise<Response> =>{
-    try {
-        const rides=await Ride.find ({status:"cancelled"})
-             .populate("customer", "name phone")
-             .populate("transporter", "name phone vehicle")
-             .sort({cancelledAt:-1});
-
-             return res.status(200).json({
-                success:true,
-                count:rides.length,
-                rides,
-             });
-    }catch(err){
-        console.log(err);
-        return res.status(500).json({message:"Internal Server Error",success:false});
-    }
-}
-
-
-export const getCompletedRides = async (req:Request, res:Response):Promise<Response> =>{
-    try{
-        const rides= await Ride.find({ status: "completed" })
             .populate("customer", "name phone")
             .populate("transporter", "name phone vehicle")
-            .sort({completedAt:-1});
+            .sort({ requestedAt: -1 });
 
         return res.status(200).json({
-            success:true,
-            count:rides.length,
+            success: true,
+            count: rides.length,
             rides,
         });
-    }catch(err){
+    } catch (err) {
         console.log(err);
-        return res.status(500).json ({message: "Internal Server Error", success:false});
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+}
+
+export const viewRideDetails = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const id = req.params.id;
+        const ride = await Ride.findById(id)
+            .populate("customer", "name phone")
+            .populate("transporter", "name phone vehicle");
+
+        if (!ride) {
+            return res.status(404).json({
+                success: false,
+                message: "Ride not found",
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            ride,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+}
+
+
+export const getCancelRideById = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const id = req.params.id;
+        const ride = await Ride.findById(id)
+            .populate("customer", "name phone")
+            .populate("transporter", "name phone vehicle");
+
+        if (!ride) {
+            return res.status(404).json({
+                success: false,
+                message: "Ride not found",
+            });
+        }
+        if (ride.status !== "cancelled") {
+            return res.status(400).json({
+                success: false,
+                message: "This ride is not cancelled",
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            ride,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+}
+
+
+export const getCancelledRides = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const rides = await Ride.find({ status: "cancelled" })
+            .populate("customer", "name phone")
+            .populate("transporter", "name phone vehicle")
+            .sort({ cancelledAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: rides.length,
+            rides,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+}
+
+
+export const getCompletedRides = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const rides = await Ride.find({ status: "completed" })
+            .populate("customer", "name phone")
+            .populate("transporter", "name phone vehicle")
+            .sort({ completedAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            count: rides.length,
+            rides,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Internal Server Error", success: false });
+    }
+}
+
+
+
+export const getDashboardStats = async (req: Request, res: Response): Promise<Response> => {
+    try {
+        //  const totalCustomers= await Customer.countDocuments();
+        //  const totalTransporters = await TransportProvider.countDocuments();
+        //  const kycPending= await TransportProvider.countDocuments({kycStatus: "pending"});
+        //  const activeRides= await Ride.countDocuments({status:"active"});
+
+        const [  totalCustomers, totalTransporters,   kycPending,   activeRides] = await Promise.all([
+            Customer.countDocuments(),
+            TransportProvider.countDocuments(),
+            TransportProvider.countDocuments({ kycStatus: "pending" }),
+            Ride.countDocuments({ status: "active" })
+        ]);
+
+        // the difference bet this two code is that in above code mongodb performs db operations in
+        //  multiple calls and in  below version in one db access it calculates all . so it is more optimized
+
+        return res.status(200).json({
+            success: true,
+            stats: {
+                totalCustomers,
+                totalTransporters,
+                kycPending,
+                activeRides
+            }
+        })
+
+
+    } catch (err) {
+        console.error("Dashboard stats error:", err);
+
+        return res.status(500).json({
+            success: false,
+            message: "Failed to fetch dashboard statistics"
+        });
     }
 }

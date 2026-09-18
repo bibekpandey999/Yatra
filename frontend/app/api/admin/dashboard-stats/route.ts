@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
     try {
-        const body = await req.json();
-        const res = await fetch(`${process.env.ADMIN_URL}/enter-admin`, {
-            method: "POST",
+        const res = await fetch(`${process.env.ADMIN_URL}/get-stats`, {
+            method: "GET",
             headers: {
-                "Content-Type": "application/json",
+               Cookie: req.headers.get("cookie") || ""
             },
-            body: JSON.stringify(body)
+            cache: "no-store"
         })
 
         const data = await res.json();
-
         return NextResponse.json(data, {
             status: res.status,
         });
