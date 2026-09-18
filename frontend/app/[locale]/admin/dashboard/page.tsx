@@ -9,6 +9,16 @@ interface StatsProps {
   activeRides: number
 }
 
+interface PendingKyc {
+  _id: string,
+  name: string,
+  phone: number,
+  vehicle?: string,
+  isKycCompleted: boolean,
+  isKycDataSubmitted: boolean
+
+}
+
 export default function AdminDashboard() {
 
   const [stats, setStats] = useState<StatsProps>({
@@ -18,7 +28,10 @@ export default function AdminDashboard() {
     activeRides: 0
   });
 
+  const [pendingKyc, setPendingKyc] = useState<PendingKyc[]>([]);
+
   const [loadingStat, setLoadingStat] = useState(false);
+  const [loadingKyc, setLoadingKyc] = useState(false);
 
 
   useEffect(() => {
@@ -26,7 +39,7 @@ export default function AdminDashboard() {
     const handleStats = async () => {
       try {
         setLoadingStat(true);
-        const res = await fetch("/api/admin/dashboard-stats", {
+        const res = await fetch("/api/admin/dashboard/stats", {
           method: "GET",
           credentials: "include",
           cache: "no-store"
@@ -44,35 +57,50 @@ export default function AdminDashboard() {
       }
     };
 
+    const handlePendingKyc = async () => {
+      try {
+        setLoadingKyc(true);
+        const res = await fetch("/api/admin/dashboard/pending-kyc", {
+          method: "GET",
+          credentials: "include",
+          cache: "no-store"
+        })
+
+        const data = await res.json();
+        if (data.success) {
+          setPendingKyc(data.transporters);
+        }
+      } catch (err) {
+        console.log("Failed to fetch pending kyc: ", err)
+      } finally {
+        setLoadingKyc(false)
+      }
+    }
+
 
     handleStats();
+    handlePendingKyc();
   }, []);
 
 
-  const pendingProviders = [
-    { name: "Niten Thapa", phone: "9812345678", vehicle: "Bus", status: "Pending" },
-    { name: "Sahil Gurung", phone: "9801234567", vehicle: "Car", status: "Pending" },
-    { name: "Samir Rana Magar", phone: "9801442366", vehicle: "Truck", status: "Pending" },
-  ];
-
   const statCards = [
     {
-        label: "Total Customers",
-        value: stats.totalCustomers,
+      label: "Total Customers",
+      value: stats.totalCustomers,
     },
     {
-        label: "Transport Providers",
-        value: stats.totalTransporters,
+      label: "Transport Providers",
+      value: stats.totalTransporters,
     },
     {
-        label: "Pending KYC",
-        value: stats.kycPending,
+      label: "Pending KYC",
+      value: stats.kycPending,
     },
     {
-        label: "Active Rides",
-        value: stats.activeRides,
+      label: "Active Rides",
+      value: stats.activeRides,
     },
-];
+  ];
 
   return (
     <div className=" p-6 md:p-10">
@@ -106,23 +134,37 @@ export default function AdminDashboard() {
               </tr>
             </thead>
             <tbody>
-              {pendingProviders.map((provider) => (
-                <tr key={provider.phone} className="border-b border-gray-100">
-                  <td className="py-3 px-2 text-gray-900">{provider.name}</td>
-                  <td className="py-3 px-2 text-gray-900">{provider.phone}</td>
-                  <td className="py-3 px-2 text-gray-900">{provider.vehicle}</td>
-                  <td className="py-3 px-2">
-                    <span className="bg-warning/20 text-warning px-3 py-1 rounded-full text-xs font-semibold">
-                      {provider.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-2">
-                    <button className="bg-accent text-white px-3 py-1 rounded-lg text-sm hover:bg-accent-dark transition">
-                      Verify
-                    </button>
-                  </td>
-                </tr>
-              ))}
+
+              {
+                loadingKyc ? (
+                  <tr>
+                    <td colSpan={5} className="py-6 text-center text-gray-500" > Loading pending KYC... </td>
+                  </tr>
+                ) : pendingKyc.length === 0 ? (
+                  <tr>
+                    <td className="py-6 text-center text-gray-500">No Pedning Kyc Providers</td>
+                  </tr>
+                ) : (
+
+                  pendingKyc.map((provider) => (
+                    <tr key={provider._id} className="border-b border-gray-100">
+                      <td className="py-3 px-2 text-gray-900">{provider.name}</td>
+                      <td className="py-3 px-2 text-gray-900">{provider.phone}</td>
+                      <td className="py-3 px-2 text-gray-900">{provider.vehicle || "N/A"}</td>
+                      <td className="py-3 px-2">
+                        <span className="bg-warning/20 text-warning px-3 py-1 rounded-full text-xs font-semibold">
+                          Pending
+                        </span>
+                      </td>
+                      <td className="py-3 px-2">
+                        <button className="bg-accent text-white px-3 py-1 rounded-lg text-sm hover:bg-accent-dark transition">
+                          Verify
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )
+              }
             </tbody>
           </table>
         </div>
