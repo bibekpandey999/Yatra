@@ -163,5 +163,10 @@ transportProviderSchema.pre("save", async function () {
     }
 });
 
+
+transportProviderSchema.index({
+    currentLocation: "2dsphere",
+});
+
 export const TransportProvider = mongoose.model("TransportProvider", transportProviderSchema);
 

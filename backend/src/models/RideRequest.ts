@@ -13,13 +13,20 @@ const RideRequestSchema = new mongoose.Schema(
             address: {
                 type: String,
                 required: true,
-                trim: true,
+                trim: true
+            },
+
+            type: {
+                type: String,
+                enum: ["Point"],
+                default: "Point",
             },
 
             coordinates: {
                 type: [Number],
                 required: true,
-            },
+            }
+
         },
 
         dropoffLocation: {
@@ -27,6 +34,11 @@ const RideRequestSchema = new mongoose.Schema(
                 type: String,
                 required: true,
                 trim: true,
+            },
+            type: {
+                type: String,
+                enum: ["Point"],
+                default: "Point",
             },
 
             coordinates: {
@@ -55,6 +67,7 @@ const RideRequestSchema = new mongoose.Schema(
             min: 1,
             default: 1,
         },
+
         status: {
             type: String,
             enum: [
@@ -70,10 +83,12 @@ const RideRequestSchema = new mongoose.Schema(
             type: Date,
             required: true
         },
+
         acceptedBy: {
             type: Schema.Types.ObjectId,
             ref: "TransportProvider"
         },
+
         acceptedAt: {
             type: Date,
         },
@@ -82,7 +97,11 @@ const RideRequestSchema = new mongoose.Schema(
             type: Date,
         },
 
-    }, { timestamps: true })
+    }, { timestamps: true });
+
+RideRequestSchema.index({
+    pickupLocation: "2dsphere",
+});
 
 const RideRequest = mongoose.model("RideRequest", RideRequestSchema);
 export default RideRequest;
