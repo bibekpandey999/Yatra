@@ -157,7 +157,7 @@ export const submitKyc = async (req: Request, res: Response): Promise<Response> 
         const { citizenshipCard, drivingLicense, vehicleRegistration, vehiclePhoto } = req.files || {};
         let { vehicleType, numberPlate, capacityKg, serviceAreas, pricePerKm } = req.body;
 
-        if (!citizenshipCard || !drivingLicense || vehicleRegistration || !vehiclePhoto || !vehicleType || !numberPlate || !capacityKg || !pricePerKm) {
+        if (!citizenshipCard || !drivingLicense || !vehicleRegistration || !vehiclePhoto || !vehicleType || !numberPlate || !capacityKg || !pricePerKm) {
             return res.status(400).json({
                 success: false,
                 message: " All fields are required"
@@ -233,7 +233,7 @@ export const getTransporterProfile = async (req: Request, res: Response): Promis
         }
 
         return res.status(200).json({
-            message:"Transporter profile featched successfully",
+            message:"Transporter profile fetched successfully",
             success: true,
             transporter
         })
